@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Generator</title>
+    <link rel="icon" href="icon.png" type="image/x-icon">
+    <title>arial narrow on solid background image generator</title>
     <style>
         #previewCanvas {
-            border: 1px solid black;
+            border: none;
         }
 
         #downloadButton, #resetButton {
@@ -23,14 +24,15 @@
             <label for="text">your text:</label>
             <input type="text" id="text" name="text" value="brat" required>
             <br><br>
-            <label for="bgcolor">change color:</label>
+            <label for="bgcolor">change colour:</label>
             <input type="color" id="bgcolor" name="bgcolor" value="#8ACE00">
-            <br><br>
-            <button type="button" id="resetButton">reset color</button>
-            <button type="button" id="downloadButton">download</button>
+            <br>
+            <button type="button" id="resetButton">reset colour</button>
         </form>
         <br>
         <canvas id="previewCanvas" width="400" height="400"></canvas>
+        <br>
+        <button type="button" id="downloadButton">download</button>
     </div>
     <script>
         const textInput = document.getElementById('text');
