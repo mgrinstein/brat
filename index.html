@@ -1,143 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="icon.png" type="image/x-icon">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="icon.png" type="image/x-icon" />
+    <meta
+      name="description"
+      content="Generate custom images with your text on a colored background."
+    />
+    <meta
+      name="keywords"
+      content="image generator, text to image, custom images"
+    />
+
     <title>arial narrow on solid background image generator</title>
     <style>
-        #previewCanvas {
-            border: none;
-        }
+      #previewCanvas {
+        border: none;
+      }
 
-        #downloadButton, #resetButton {
-            margin-top: 20px; /* Space between canvas and buttons */
-            display: inline-block; /* Display buttons in line */
-            margin-right: 10px; /* Space between buttons */
-        }
+      #downloadButton,
+      #resetButton {
+        margin-top: 20px; /* Space between canvas and buttons */
+        display: inline-block; /* Display buttons in line */
+        margin-right: 10px; /* Space between buttons */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>hello</h1>
     <div id="container">
-        <form id="generateForm">
-            <label for="text">your text:</label>
-            <input type="text" id="text" name="text" value="brat" required>
-            <br><br>
-            <label for="bgcolor">change colour:</label>
-            <input type="color" id="bgcolor" name="bgcolor" value="#8ACE00">
-            <br>
-            <button type="button" id="resetButton">reset colour</button>
-        </form>
-        <br>
-        <canvas id="previewCanvas" width="400" height="400"></canvas>
-        <br>
-        <button type="button" id="downloadButton">download</button>
+      <form id="generateForm">
+        <label for="text">your text:</label>
+        <input type="text" id="text" name="text" value="pls type here" required />
+        <br /><br />
+        <label for="bgcolor">change colour:</label>
+        <input type="color" id="bgcolor" name="bgcolor" value="#8ACE00" />
+        <br />
+        <button type="button" id="resetButton">regrets? reset colour</button>
+      </form>
+      <br />
+      <canvas id="previewCanvas" width="400" height="400"></canvas>
+      <br />
+      <button type="button" id="downloadButton">download itt</button>
     </div>
     <script>
-        const textInput = document.getElementById('text');
-        const colorInput = document.getElementById('bgcolor');
-        const canvas = document.getElementById('previewCanvas');
-        const ctx = canvas.getContext('2d');
-        const downloadButton = document.getElementById('downloadButton');
-        const resetButton = document.getElementById('resetButton');
+      const textInput = document.getElementById("text");
+      const colorInput = document.getElementById("bgcolor");
+      const canvas = document.getElementById("previewCanvas");
+      const ctx = canvas.getContext("2d");
+      const downloadButton = document.getElementById("downloadButton");
+      const resetButton = document.getElementById("resetButton");
 
-        const defaultColor = '#8ACE00';  // Default background color
+      const defaultColor = "#8ACE00"; // Default background color
 
-        function wrapText(context, text, x, y, maxWidth, lineHeight) {
-            const words = text.split(' ');
-            let line = '';
-            let testLine = '';
-            let metrics = null;
-            let testWidth = 0;
-            const lines = [];
+      function wrapText(context, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(" ");
+        let line = "";
+        let testLine = "";
+        let metrics = null;
+        let testWidth = 0;
+        const lines = [];
 
-            for (let n = 0; n < words.length; n++) {
-                testLine = line + words[n] + ' ';
-                metrics = context.measureText(testLine);
-                testWidth = metrics.width;
-                if (testWidth > maxWidth && n > 0) {
-                    lines.push(line);
-                    line = words[n] + ' ';
-                } else {
-                    line = testLine;
-                }
-            }
+        for (let n = 0; n < words.length; n++) {
+          testLine = line + words[n] + " ";
+          metrics = context.measureText(testLine);
+          testWidth = metrics.width;
+          if (testWidth > maxWidth && n > 0) {
             lines.push(line);
-
-            // Center vertically by adjusting the initial y position
-            const totalHeight = lines.length * lineHeight;
-            let offsetY = y - (totalHeight / 2) + (lineHeight / 2); // Adjusted by adding half the lineHeight
-
-            for (let i = 0; i < lines.length; i++) {
-                context.fillText(lines[i], x, offsetY);
-                offsetY += lineHeight;
-            }
+            line = words[n] + " ";
+          } else {
+            line = testLine;
+          }
         }
+        lines.push(line);
 
-        function drawPreview() {
-            const text = textInput.value;
-            const backgroundColor = colorInput.value;
+        // Center vertically by adjusting the initial y position
+        const totalHeight = lines.length * lineHeight;
+        let offsetY = y - totalHeight / 2 + lineHeight / 2; // Adjusted by adding half the lineHeight
 
-            // Clear the canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Set the background color
-            ctx.fillStyle = backgroundColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Apply blur effect and set text properties for low-quality stretched font
-            ctx.filter = 'blur(1px)';  // Adjust blur amount as needed
-            ctx.font = '50px Arial Narrow';
-            ctx.fillStyle = 'black';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            // Calculate the line height
-            const lineHeight = 50;  // Same as font size for simplicity
-            const maxWidth = canvas.width - 40;  // Some padding on the sides
-
-            // Apply low-resolution effect by scaling up and down
-            const lowResCanvas = document.createElement('canvas');
-            const lowResCtx = lowResCanvas.getContext('2d');
-            lowResCanvas.width = 200;
-            lowResCanvas.height = 200;
-
-            // Draw the text normally on low-res canvas
-            lowResCtx.fillStyle = backgroundColor;
-            lowResCtx.fillRect(0, 0, lowResCanvas.width, lowResCanvas.height);
-            lowResCtx.font = '25px Arial Narrow';  // Adjusted for low-res canvas
-            lowResCtx.fillStyle = 'black';
-            lowResCtx.textAlign = 'center';
-            lowResCtx.textBaseline = 'middle';
-
-            wrapText(lowResCtx, text, lowResCanvas.width / 2, lowResCanvas.height / 2, 180, 30);
-
-            // Draw low-res canvas back to main canvas
-            ctx.drawImage(lowResCanvas, 0, 0, 400, 400);
-
-            // Remove the blur effect
-            ctx.filter = 'none';
+        for (let i = 0; i < lines.length; i++) {
+          context.fillText(lines[i], x, offsetY);
+          offsetY += lineHeight;
         }
+      }
 
-        textInput.addEventListener('input', drawPreview);
-        colorInput.addEventListener('input', drawPreview);
+      function drawPreview() {
+        const text = textInput.value;
+        const backgroundColor = colorInput.value;
 
-        resetButton.addEventListener('click', function() {
-            colorInput.value = defaultColor; // Reset color input to default
-            drawPreview(); // Redraw canvas with default color
-        });
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Initial draw
-        drawPreview();
+        // Set the background color
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        downloadButton.addEventListener('click', function() {
-            const dataUrl = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = 'generated_image.png';
-            link.click();
-        });
+        // Apply blur effect and set text properties for low-quality stretched font
+        ctx.filter = "blur(1px)"; // Adjust blur amount as needed
+        ctx.font = "50px Arial Narrow";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // Calculate the line height
+        const lineHeight = 50; // Same as font size for simplicity
+        const maxWidth = canvas.width - 40; // Some padding on the sides
+
+        // Apply low-resolution effect by scaling up and down
+        const lowResCanvas = document.createElement("canvas");
+        const lowResCtx = lowResCanvas.getContext("2d");
+        lowResCanvas.width = 200;
+        lowResCanvas.height = 200;
+
+        // Draw the text normally on low-res canvas
+        lowResCtx.fillStyle = backgroundColor;
+        lowResCtx.fillRect(0, 0, lowResCanvas.width, lowResCanvas.height);
+        lowResCtx.font = "25px Arial Narrow"; // Adjusted for low-res canvas
+        lowResCtx.fillStyle = "black";
+        lowResCtx.textAlign = "center";
+        lowResCtx.textBaseline = "middle";
+
+        wrapText(
+          lowResCtx,
+          text,
+          lowResCanvas.width / 2,
+          lowResCanvas.height / 2,
+          180,
+          30
+        );
+
+        // Draw low-res canvas back to main canvas
+        ctx.drawImage(lowResCanvas, 0, 0, 400, 400);
+
+        // Remove the blur effect
+        ctx.filter = "none";
+      }
+
+      textInput.addEventListener("input", drawPreview);
+      colorInput.addEventListener("input", drawPreview);
+
+      resetButton.addEventListener("click", function () {
+        colorInput.value = defaultColor; // Reset color input to default
+        drawPreview(); // Redraw canvas with default color
+      });
+
+      // Initial draw
+      drawPreview();
+
+      downloadButton.addEventListener("click", function () {
+        const dataUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = "generated_image.png";
+        link.click();
+      });
     </script>
-</body>
+  </body>
 </html>
