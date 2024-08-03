@@ -8,18 +8,24 @@
         #previewCanvas {
             border: 1px solid black;
         }
+
+        #downloadButton {
+            margin-top: 20px; /* Space between canvas and button */
+        }
     </style>
 </head>
 <body>
-    <h1>Generate an Image</h1>
-    <form id="generateForm">
-        <label for="text">Text:</label>
-        <input type="text" id="text" name="text" required>
-        <br><br>
-        <button type="button" id="downloadButton">Download Image</button>
-    </form>
-    <br>
-    <canvas id="previewCanvas" width="400" height="400"></canvas>
+    <h1>hello</h1>
+    <div id="container">
+        <form id="generateForm">
+            <label for="text">your text:</label>
+            <input type="text" id="text" name="text" value="brat" required>
+            <br><br>
+        </form>
+        <canvas id="previewCanvas" width="400" height="400"></canvas>
+        <br>
+        <button type="button" id="downloadButton">download</button>
+    </div>
     <script>
         const textInput = document.getElementById('text');
         const canvas = document.getElementById('previewCanvas');
@@ -68,7 +74,8 @@
             ctx.fillStyle = backgroundColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Set the text properties for low-quality stretched font effect
+            // Apply blur effect and set text properties for low-quality stretched font
+            ctx.filter = 'blur(1px)';  // Adjust blur amount as needed
             ctx.font = '50px Arial Narrow';
             ctx.fillStyle = 'black';
             ctx.textAlign = 'center';
@@ -87,7 +94,7 @@
             // Draw the text normally on low-res canvas
             lowResCtx.fillStyle = backgroundColor;
             lowResCtx.fillRect(0, 0, lowResCanvas.width, lowResCanvas.height);
-            lowResCtx.font = '25px Arial Narrow';  // Adjusted for low-res canvas
+            lowResCtx.font = '30px Arial Narrow';  // Adjusted for low-res canvas
             lowResCtx.fillStyle = 'black';
             lowResCtx.textAlign = 'center';
             lowResCtx.textBaseline = 'middle';
@@ -96,6 +103,9 @@
 
             // Draw low-res canvas back to main canvas
             ctx.drawImage(lowResCanvas, 0, 0, 400, 400);
+
+            // Remove the blur effect
+            ctx.filter = 'none';
         }
 
         textInput.addEventListener('input', drawPreview);
