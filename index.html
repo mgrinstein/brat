@@ -9,8 +9,10 @@
             border: 1px solid black;
         }
 
-        #downloadButton {
-            margin-top: 20px; /* Space between canvas and button */
+        #downloadButton, #resetButton {
+            margin-top: 20px; /* Space between canvas and buttons */
+            display: inline-block; /* Display buttons in line */
+            margin-right: 10px; /* Space between buttons */
         }
     </style>
 </head>
@@ -36,6 +38,9 @@
         const canvas = document.getElementById('previewCanvas');
         const ctx = canvas.getContext('2d');
         const downloadButton = document.getElementById('downloadButton');
+        const resetButton = document.getElementById('resetButton');
+
+        const defaultColor = '#8ACE00';  // Default background color
 
         function wrapText(context, text, x, y, maxWidth, lineHeight) {
             const words = text.split(' ');
@@ -115,6 +120,11 @@
 
         textInput.addEventListener('input', drawPreview);
         colorInput.addEventListener('input', drawPreview);
+
+        resetButton.addEventListener('click', function() {
+            colorInput.value = defaultColor; // Reset color input to default
+            drawPreview(); // Redraw canvas with default color
+        });
 
         // Initial draw
         drawPreview();
