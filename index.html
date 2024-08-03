@@ -21,53 +21,56 @@
             <label for="text">your text:</label>
             <input type="text" id="text" name="text" value="brat" required>
             <br><br>
+            <label for="bgcolor">change color:</label>
+            <input type="color" id="bgcolor" name="bgcolor" value="#8ACE00">
+            <br><br>
+            <button type="button" id="resetButton">reset color</button>
+            <button type="button" id="downloadButton">download</button>
         </form>
-        <canvas id="previewCanvas" width="400" height="400"></canvas>
         <br>
-        <button type="button" id="downloadButton">download</button>
+        <canvas id="previewCanvas" width="400" height="400"></canvas>
     </div>
     <script>
         const textInput = document.getElementById('text');
+        const colorInput = document.getElementById('bgcolor');
         const canvas = document.getElementById('previewCanvas');
         const ctx = canvas.getContext('2d');
-        const backgroundColor = '#8ACE00';
         const downloadButton = document.getElementById('downloadButton');
 
         function wrapText(context, text, x, y, maxWidth, lineHeight) {
-    const words = text.split(' ');
-    let line = '';
-    let testLine = '';
-    let metrics = null;
-    let testWidth = 0;
-    const lines = [];
+            const words = text.split(' ');
+            let line = '';
+            let testLine = '';
+            let metrics = null;
+            let testWidth = 0;
+            const lines = [];
 
-    for (let n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
-        metrics = context.measureText(testLine);
-        testWidth = metrics.width;
-        if (testWidth > maxWidth && n > 0) {
+            for (let n = 0; n < words.length; n++) {
+                testLine = line + words[n] + ' ';
+                metrics = context.measureText(testLine);
+                testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    lines.push(line);
+                    line = words[n] + ' ';
+                } else {
+                    line = testLine;
+                }
+            }
             lines.push(line);
-            line = words[n] + ' ';
-        } else {
-            line = testLine;
+
+            // Center vertically by adjusting the initial y position
+            const totalHeight = lines.length * lineHeight;
+            let offsetY = y - (totalHeight / 2) + (lineHeight / 2); // Adjusted by adding half the lineHeight
+
+            for (let i = 0; i < lines.length; i++) {
+                context.fillText(lines[i], x, offsetY);
+                offsetY += lineHeight;
+            }
         }
-    }
-    lines.push(line);
-
-    // Center vertically by adjusting the initial y position
-    const totalHeight = lines.length * lineHeight;
-    let offsetY = y - (totalHeight / 2) + (lineHeight / 2); // Adjusted by adding half the lineHeight
-
-    for (let i = 0; i < lines.length; i++) {
-        context.fillText(lines[i], x, offsetY);
-        offsetY += lineHeight;
-    }
-}
-
-
 
         function drawPreview() {
             const text = textInput.value;
+            const backgroundColor = colorInput.value;
 
             // Clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -96,7 +99,7 @@
             // Draw the text normally on low-res canvas
             lowResCtx.fillStyle = backgroundColor;
             lowResCtx.fillRect(0, 0, lowResCanvas.width, lowResCanvas.height);
-            lowResCtx.font = '30px Arial Narrow';  // Adjusted for low-res canvas
+            lowResCtx.font = '25px Arial Narrow';  // Adjusted for low-res canvas
             lowResCtx.fillStyle = 'black';
             lowResCtx.textAlign = 'center';
             lowResCtx.textBaseline = 'middle';
@@ -111,6 +114,7 @@
         }
 
         textInput.addEventListener('input', drawPreview);
+        colorInput.addEventListener('input', drawPreview);
 
         // Initial draw
         drawPreview();
